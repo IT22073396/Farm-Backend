@@ -65,7 +65,9 @@ app.use("/api/shipments",require("./routes/shipments"));
 
 app.use("/api/tmails",require("./routes/tmails"));
 
-//server configurations
+app.use("/api/temperatureController",require("./routes/temperatureController"));
+
+//server configurations 
 //define port
 
 const PORT=process.env.PORT || 4000;
