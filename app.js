@@ -1,7 +1,10 @@
-require("dotenv").config({path:"./config/config.env"})
+// require("dotenv").config({path:"./config/config.env"})
+require("dotenv").config({ path: "./config/config.env" });
+
 const express = require('express');
 const morgan = require('morgan');
 const connectDB = require("./config/db");
+
 //middleware/auth will act as defender for the route
 const auth =require("./middlewares/auth")
 //intialize express app
