@@ -16,6 +16,7 @@ app.use(express.json()); //send responses back in json format
 app.use(morgan("tiny"));//if we hit any api endpoint this will log into our console
 app.use(require("cors")());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('uploads'));
 
 //routes
 

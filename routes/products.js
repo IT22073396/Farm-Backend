@@ -5,11 +5,11 @@ const fs = require('fs');
 const { validateProduct, Product } = require('../models/Product');
 const multer = require('multer');
 
-// 1. Configure uploads directory with absolute path
-const uploadsDir = path.resolve(__dirname, '../../uploads');
+// Configure uploads directory
+const uploadsDir = path.resolve(__dirname, '../uploads');
 console.log(`Uploads will be saved to: ${uploadsDir}`);
 
-// 2. Ensure directory exists with proper permissions
+// Ensure directory exists
 if (!fs.existsSync(uploadsDir)) {
   try {
     fs.mkdirSync(uploadsDir, { recursive: true, mode: 0o777 });
@@ -20,78 +20,51 @@ if (!fs.existsSync(uploadsDir)) {
   }
 }
 
-// 3. Enhanced Multer configuration with debugging
+// Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    const originalName = file.originalname;
-    const ext = path.extname(originalName).toLowerCase();
-    const baseName = path.basename(originalName, ext);
+    const ext = path.extname(file.originalname).toLowerCase();
+    const baseName = path.basename(file.originalname, ext).replace(/\s+/g, '-');
     const uniqueName = `${baseName}-${Date.now()}${ext}`;
     cb(null, uniqueName);
   }
 });
 
-// 4. Comprehensive file validation
 const fileFilter = (req, file, cb) => {
-  const validMimeTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/webp'
-  ];
-  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+  const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
   
   const fileExt = path.extname(file.originalname).toLowerCase();
-  const isMimeValid = validMimeTypes.includes(file.mimetype);
-  const isExtValid = validExtensions.includes(fileExt);
-
-  console.log(`Validating file: ${file.originalname}`);
-  console.log(`MIME type: ${file.mimetype}, Extension: ${fileExt}`);
-
-  if (isMimeValid && isExtValid) {
-    console.log('File accepted');
+  if (validMimeTypes.includes(file.mimetype) && validExtensions.includes(fileExt)) {
     cb(null, true);
   } else {
-    console.log('File rejected - invalid type');
-    cb(new Error(
-      `Only image files are allowed (${validExtensions.join(', ')})`
-    ), false);
+    cb(new Error(`Only image files are allowed (${validExtensions.join(', ')})`), false);
   }
 };
 
-// 5. Configure Multer with error handling
 const upload = multer({
   storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-    files: 1
-  },
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: fileFilter
-}).single('image'); // Explicitly use single() with field name
+}).single('image');
 
-// 6. Custom middleware to handle upload errors
 const handleUpload = (req, res, next) => {
   upload(req, res, (err) => {
     if (err) {
-      console.error('Upload error:', err);
-      
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(413).json({ error: 'File too large (max 5MB)' });
       }
       if (err.message.includes('Only image files')) {
         return res.status(415).json({ error: err.message });
       }
-      
       return res.status(400).json({ error: 'File upload failed' });
     }
-    
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    
     next();
   });
 };
@@ -99,32 +72,21 @@ const handleUpload = (req, res, next) => {
 // CREATE PRODUCT
 router.post('/', handleUpload, async (req, res) => {
   try {
-    // Validate product data
     const { error } = validateProduct(req.body);
     if (error) {
-      // Clean up uploaded file if validation fails
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ error: error.details[0].message });
     }
 
     const product = new Product({
-      name: req.body.name,
-      productId: req.body.productId,
-      quantity: req.body.quantity,
-      price: req.body.price,
-      description: req.body.description,
-      imageUrl: `/uploads/${req.file.filename}`
+      ...req.body,
+      imageUrl: `/uploads/${req.file.filename}` // Consistent forward slash
     });
 
     const savedProduct = await product.save();
     res.status(201).json(savedProduct);
-
   } catch (err) {
-    console.error('Product creation error:', err);
-    
-    // Clean up file if error occurs
     if (req.file) fs.unlinkSync(req.file.path);
-    
     res.status(500).json({ 
       error: 'Failed to create product',
       details: process.env.NODE_ENV === 'development' ? err.message : undefined
@@ -136,9 +98,15 @@ router.post('/', handleUpload, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
-    res.status(200).json(products);
+    
+    // Ensure consistent URL format
+    const productsWithUrls = products.map(product => ({
+      ...product._doc,
+      imageUrl: product.imageUrl.replace(/\\/g, '/') // Force forward slashes
+    }));
+    
+    res.status(200).json(productsWithUrls);
   } catch (err) {
-    console.error('Get products error:', err);
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 });
@@ -155,7 +123,13 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    res.status(200).json(product);
+    // Ensure consistent URL format
+    const productWithUrl = {
+      ...product._doc,
+      imageUrl: product.imageUrl.replace(/\\/g, '/')
+    };
+
+    res.status(200).json(productWithUrl);
   } catch (err) {
     console.error('Get product error:', err);
     res.status(500).json({ error: 'Failed to fetch product' });
@@ -178,7 +152,6 @@ router.put('/:id', handleUpload, async (req, res) => {
 
     const updateData = { ...req.body };
 
-    // Handle image update
     if (req.file) {
       updateData.imageUrl = `/uploads/${req.file.filename}`;
       
@@ -203,7 +176,10 @@ router.put('/:id', handleUpload, async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    res.status(200).json(updatedProduct);
+    res.status(200).json({
+      ...updatedProduct._doc,
+      imageUrl: updatedProduct.imageUrl.replace(/\\/g, '/')
+    });
   } catch (err) {
     console.error('Update product error:', err);
     if (req.file) fs.unlinkSync(req.file.path);
