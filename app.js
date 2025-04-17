@@ -1,10 +1,7 @@
-// require("dotenv").config({path:"./config/config.env"})
-require("dotenv").config({ path: "./config/config.env" });
-
+require("dotenv").config({path:"./config/config.env"})
 const express = require('express');
 const morgan = require('morgan');
 const connectDB = require("./config/db");
-
 //middleware/auth will act as defender for the route
 const auth =require("./middlewares/auth")
 //intialize express app
@@ -16,7 +13,6 @@ app.use(express.json()); //send responses back in json format
 app.use(morgan("tiny"));//if we hit any api endpoint this will log into our console
 app.use(require("cors")());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/uploads', express.static('uploads'));
 
 //routes
 
@@ -69,10 +65,10 @@ app.use("/api/shipments",require("./routes/shipments"));
 
 app.use("/api/tmails",require("./routes/tmails"));
 
-app.use("/api/temperatureController",require("./routes/temperatureController"));
-
-//server configurations 
+//server configurations
 //define port
+
+
 
 const PORT=process.env.PORT || 4000;
 
