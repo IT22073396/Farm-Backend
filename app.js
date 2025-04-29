@@ -1,4 +1,5 @@
 require("dotenv").config({ path: "./config/config.env" });
+
 const express = require('express');
 const morgan = require('morgan');
 const connectDB = require("./config/db");
@@ -55,3 +56,4 @@ app.listen(PORT, async () => {
         console.log("Error connecting to database:", error.message);
     }
 });
+
