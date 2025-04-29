@@ -1,47 +1,7 @@
-<<<<<<< HEAD
-{
-  "name": "server",
-  "version": "1.0.0",
-  "main": "app.js",
-  "scripts": {
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.0.1",
-    "chart.js": "^4.4.2",
-    "constants": "^0.0.2",
-    "cors": "^2.8.5",
-    "debug": "^4.3.4",
-    "depd": "^2.0.0",
-    "dotenv": "^16.4.4",
-    "express": "^4.19.2",
-    "express-validator": "^7.0.1",
-    "iconv-lite": "^0.6.3",
-    "joi": "^17.12.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.2",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.13",
-    "nodemon": "^3.1.0",
-    "pdfkit": "^0.15.0",
-    "react-bootstrap": "^2.10.1",
-    "react-chartjs-2": "^5.2.0",
-    "resend": "^3.2.0",
-    "vite": "^5.2.6"
-  },
-  "description": ""
-}
-=======
 {
   "name": "farm-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
@@ -50,11 +10,18 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.2",
+    "constants": "^0.0.2",
     "cors": "^2.8.5",
+    "debug": "^4.3.4",
+    "depd": "^2.0.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-validator": "^7.0.1",
+    "iconv-lite": "^0.6.3",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.0",
@@ -62,7 +29,11 @@
     "multer": "^1.4.5-lts.2",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
+    "pdfkit": "^0.15.0",
+    "react-bootstrap": "^2.10.1",
+    "react-chartjs-2": "^5.2.0",
+    "resend": "^3.2.0",
+    "vite": "^5.2.6",
     "ws": "^8.18.1"
   }
 }
->>>>>>> 724439ea879f15448923d8c827e40ba33cd29c4d
