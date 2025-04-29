@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "server",
   "version": "1.0.0",
@@ -35,3 +36,33 @@
   },
   "description": ""
 }
+=======
+{
+  "name": "farm-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.13.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.9",
+    "ws": "^8.18.1"
+  }
+}
+>>>>>>> 724439ea879f15448923d8c827e40ba33cd29c4d
