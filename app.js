@@ -1,26 +1,32 @@
-require("dotenv").config({path:"./config/config.env"})
+require("dotenv").config({ path: "./config/config.env" });
+
 const express = require('express');
 const morgan = require('morgan');
 const connectDB = require("./config/db");
-//middleware/auth will act as defender for the route
-const auth =require("./middlewares/auth")
-//intialize express app
+const auth = require("./middlewares/auth");
+const path = require('path');
+const cors = require("cors");
+const WebSocket = require('ws'); // Import WebSocket module
+// Initialize express app
 const app = express();
-var path = require('path');
 
-//middlewares
-app.use(express.json()); //send responses back in json format
-app.use(morgan("tiny"));//if we hit any api endpoint this will log into our console
+// Middlewares
+app.use(express.json());
+app.use(morgan("tiny"));
 app.use(require("cors")());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(cors({ origin: 'http://localhost:5173' }));// Allow only this origin
 
-//routes
+// Routes
+const temperatureSendRcv = require("./routes/temperatureSendRcv");
+app.use("/api/temperatureSendRcv", temperatureSendRcv);
 
-//protected route
 
-app.get("/protected",auth,(req,res)=>{
-    return res.status(200).json({...req.user._doc});
+// Protected route
+app.get("/protected", auth, (req, res) => {
+    return res.status(200).json({ ...req.user._doc });
 });
+
 
 app.use("/api",require("./routes/auth"));
 
@@ -76,14 +82,13 @@ const PORT=process.env.PORT || 4000;
 
 //listen on port by our server
 //we dont need to connect to our app before our database so we do await
+
 app.listen(PORT, async () => {
-    try{
+    try {
         await connectDB();
-        console.log(`server listening on port: ${PORT}`);
-
+        console.log(`Server listening on port: ${PORT}`);
     } catch (error) {
-        console.log("Error connecting to database:",error.message)
-
+        console.log("Error connecting to database:", error.message);
     }
 });
 

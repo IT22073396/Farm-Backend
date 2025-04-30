@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const WebSocket = require('ws'); // Import WebSocket module
 const Temperature = require('../models/temperatureModel');
+
+const axios = require('axios'); // Import axios for HTTP requests
+
 //test
 // Define a function to periodically check and cleanup old data
 async function cleanupOldData() {
@@ -37,15 +40,15 @@ setInterval(cleanupOldData, 300000); // Runs every 5 min
 // POST route to receive temperature data
 router.post('/temperature', async (req, res) => {
   try {
-    const { temperature, humidity, moisture } = req.body;
+    const { temperature, humidity, soil_moisture } = req.body;
     // Save temperature data to MongoDB
-    const newTemperature = new Temperature({ temperature, humidity, moisture });
+    const newTemperature = new Temperature({ temperature, humidity, soil_moisture });
     await newTemperature.save();
     
     // Emit temperature update to WebSocket clients
     req.app.locals.wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ temperature }));
+        client.send(JSON.stringify({ temperature, humidity, soil_moisture }));
       }
     });
 
@@ -73,4 +76,27 @@ router.get('/data', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+const ESP32_URL = 'http://192.168.8.102/sensor-temperature'; // Replace with your ESP32 IP address
+
+router.get('/get-temperature', async (req, res) => {
+  try {
+    // Send GET request to ESP32 to fetch temperature
+    const response = await axios.get(ESP32_URL);
+
+    // Check if the response is successful
+    if (response.status === 200) {
+      const temperature = response.data; // Get the temperature from ESP32 response
+      res.json({ temperature }); // Send temperature data back to frontend as JSON
+    } else {
+      res.status(500).json({ message: 'Failed to get temperature from ESP32' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching data from ESP32' });
+  }
+});
 module.exports = router;
+
+
+

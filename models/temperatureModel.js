@@ -1,5 +1,8 @@
 //recommit
 const mongoose = require('mongoose');
+const Joi = require('joi');
+const { USER_TYPES } = require('../constants');
+
 
 const temperatureSchema = new mongoose.Schema({
   temperature: {
@@ -10,7 +13,7 @@ const temperatureSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  moisture: {
+  soil_moisture: {
     type: Number,
     required: true
   },
