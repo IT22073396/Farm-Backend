@@ -45,6 +45,8 @@ app.use("/api/deliveries",require("./routes/deliveries"));
 
 app.use("/api/inventories",require("./routes/inventories"));
 
+app.use("/api/vetenaries",require("./routes/vetenaries"));
+
 app.use("/api/vehicles",require("./routes/vehicles"));
 
 app.use("/api/invoices",require("./routes/invoices"));
