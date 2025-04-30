@@ -73,7 +73,7 @@ app.use("/api/shipments",require("./routes/shipments"));
 
 app.use("/api/tmails",require("./routes/tmails"));
 
-app.use("/api/temperatureController",require("./routes/temperatureController"));
+//app.use("/api/temperatureController",require("./routes/temperatureController"));
 
 //server configurations 
 //define port
