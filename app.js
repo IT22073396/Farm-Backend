@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const connectDB = require("./config/db");
 const auth = require("./middlewares/auth");
 const path = require('path');
-
+const cors = require("cors");
+const WebSocket = require('ws'); // Import WebSocket module
 // Initialize express app
 const app = express();
 
@@ -14,6 +15,12 @@ app.use(express.json());
 app.use(morgan("tiny"));
 app.use(require("cors")());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(cors({ origin: 'http://localhost:5173' }));// Allow only this origin
+
+// Routes
+const temperatureSendRcv = require("./routes/temperatureSendRcv");
+app.use("/api/temperatureSendRcv", temperatureSendRcv);
+
 
 // Protected route
 app.get("/protected", auth, (req, res) => {
@@ -42,7 +49,6 @@ app.use("/api/customerorder", require("./routes/customerorder"));
 app.use("/api/feedbacks", require("./routes/feedbacks"));
 app.use("/api/shipments", require("./routes/shipments"));
 app.use("/api/tmails", require("./routes/tmails"));
-// app.use("/api/temperatureController", require("./routes/temperatureController")); // added route
 
 // Server configuration
 const PORT = process.env.PORT || 4000;
