@@ -40,15 +40,15 @@ setInterval(cleanupOldData, 300000); // Runs every 5 min
 // POST route to receive temperature data
 router.post('/temperature', async (req, res) => {
   try {
-    const { temperature, humidity, soil_moisture } = req.body;
+    const { temperature, humidity, soil_moisture, height } = req.body;
     // Save temperature data to MongoDB
-    const newTemperature = new Temperature({ temperature, humidity, soil_moisture });
+    const newTemperature = new Temperature({ temperature, humidity, soil_moisture, height });
     await newTemperature.save();
     
     // Emit temperature update to WebSocket clients
     req.app.locals.wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ temperature, humidity, soil_moisture }));
+        client.send(JSON.stringify({ temperature, humidity, soil_moisture, height }));
       }
     });
 
@@ -68,10 +68,10 @@ router.get('/data', async (req, res) => {
       return res.status(404).json({ message: 'No data found' });
     }
 
-    const { temperature, humidity, moisture } = latestData;
+    const { temperature, humidity, moisture, height } = latestData;
 
     // Send the retrieved data as JSON response
-    res.json({ temperature, humidity, moisture });
+    res.json({ temperature, humidity, moisture, height });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
