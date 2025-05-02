@@ -105,7 +105,6 @@ app.use("/api/customerorder", require("./routes/customerorder"));
 app.use("/api/feedbacks", require("./routes/feedbacks"));
 app.use("/api/shipments", require("./routes/shipments"));
 app.use("/api/tmails", require("./routes/tmails"));
-// app.use('/api/tempaverage', require('./routes/tempaverage'));
 app.use('/api/data', require('./routes/dataRoutes'));
 
 // Start server
