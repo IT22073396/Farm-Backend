@@ -38,6 +38,8 @@ app.use("/api/leaves",require("./routes/leaves"));
 
 app.use("/api/suppliers",require("./routes/suppliers"));
 
+
+
 app.use("/api/orders",require("./routes/orders"));
 
 
@@ -51,7 +53,7 @@ app.use("/api/deliveries",require("./routes/deliveries"));
 
 app.use("/api/inventories",require("./routes/inventories"));
 
-app.use("/api/vetenaries",require("./routes/vetenaries"));
+app.use("/api/cows",require("./routes/cows"));
 
 app.use("/api/vehicles",require("./routes/vehicles"));
 
